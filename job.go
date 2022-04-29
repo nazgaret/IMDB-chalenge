@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+// NewJob create job worked on butch of rows with provided filter funcs
 func NewJob(filterFuncs FilterFuncs) func(strings []string) error {
 	return func(butch []string) error {
 		for _, s := range butch {

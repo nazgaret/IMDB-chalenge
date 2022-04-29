@@ -5,6 +5,7 @@ import (
 )
 
 const (
+	//filter fields indexes
 	FilterTitleTypeIndex = iota
 	FilterPrimaryTitleIndex
 	FilterOriginalTitleIndex
@@ -13,6 +14,7 @@ const (
 	FilterRuntimeMinutesIndex
 	FilterGenresIndex
 
+	//row fields indexes
 	RowTitleTypeIndex      = 1
 	RowPrimaryTitleIndex   = 2
 	RowOriginalTitleIndex  = 3
@@ -27,11 +29,12 @@ type (
 	FilterFuncs []func(lines []string) bool
 )
 
-// todo перепісать все на константи і поля структур тоже
+//newFilterFuncs create list of filter funcs to check row fields for equality
 func newFilterFuncs(filter Filter) []func(lines []string) bool {
 	funcs := make(FilterFuncs, 0, len(filter))
 	for i, v := range filter {
 		if v != "" {
+			//we need local var for closure because i change value through range
 			i := i
 			rowIndex := 0
 			switch i {
@@ -51,6 +54,7 @@ func newFilterFuncs(filter Filter) []func(lines []string) bool {
 				rowIndex = RowGenresIndex
 			}
 
+			//special filter for multi genres field
 			if i == FilterGenresIndex {
 				funcs = append(funcs, func(s []string) bool {
 					for _, s2 := range strings.Split(s[rowIndex], ",") {
@@ -62,7 +66,7 @@ func newFilterFuncs(filter Filter) []func(lines []string) bool {
 				})
 				continue
 			}
-
+			//usual function to check field by existed filter
 			funcs = append(funcs, func(s []string) bool {
 				return filter[i] == s[rowIndex]
 			})
